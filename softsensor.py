@@ -16,7 +16,7 @@ data = pd.read_csv("dataset_distill.csv", sep=";")
 #print(data) #we see there are 14 trays in this column as well
 #print()
 
-#looking at the data, some rows have extreme outliers for L and V (for example 22500 vs 1.23*10^8)
+#looking at the data, some rows have extreme outliers for L and V (for example 22500 and 1.23*10^8)
 #let's get these rows out, but first, check for missing values
 #print(data.isnull().sum()) #no missing values... but we see the dtype is int64
 #print()
@@ -28,8 +28,9 @@ data = data.astype("float64")
 #print()
 
 #now to get those outliers outta here
-#from the data, we see that the rows with L=1.23e8 also have V=1.23e8, so we'll get rid of any rows with L=1.23e8
-mask = data["L"] > 1.21e8
+#from the data, we see that the rows with extreme outliers in L also have extreme outliers in V, so we'll get rid of any rows with values greater than 20000
+#this will get rid of the rows with 22500, 22600 and 1.23e8
+mask = data["L"] > 20000
 cleaned_data = data.drop(data.loc[mask].index,axis=0)
 #print(cleaned_data)
 #print()
@@ -170,7 +171,7 @@ attempt1 = create_train_eval_model(40,0.1,1e-4,0.5,5,10,100,5)
 print()
 attempt2 = create_train_eval_model(40,0.1,1e-4,0.5,5,10,100,10)
 print()
-attempt3 = create_train_eval_model(40,0.01,1e-4,0.5,5,10,100,10)
+attempt3 = create_train_eval_model(40,0.01,1e-4,0.5,5,10,100,10) #best of the 4 attempts so far (smallest MAE, R², and validation loss)
 print()
-attempt4, model4 = create_train_eval_model(40,0.001,1e-4,0.5,5,10,100,10) #best of the 4 attempts so far
-#could continue to experiment, but would probably need a bigger dataset for further model evaluation
+attempt4 = create_train_eval_model(40,0.001,1e-4,0.5,5,10,100,10)
+#could continue to experiment, but would prefer a bigger dataset for further model training and evaluation
